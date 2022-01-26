@@ -307,55 +307,59 @@ print(f"y = {y}")
 
 # '''10, for문을 이용해 단순히 소수 구하는 함수
 # n을 n 이하의 수들로 모두 나눳을 때 한번이라도 0으로 나눠 떨어지면 소수가 아님
-start10 = time.time()
-op_cnt = 0
-primes = []
-# 2부터 1001까지 n에 들어감
-for n in range(2, 2001):
-    # n이 10이면, i는 2부터 9까지의 수로 한번씩 나눔
-    for i in range(2, n):
-        # 계산할 때마다 counter 증가
-        op_cnt += 1
-        # 만약 n을 i로 나눴을 때 나머지로 0이 나온다는 것은 나눠진다는 것이니 소수가 아님
-        if n % i == 0:
-            break
-    else:
-        primes.append(n)
-print(f"총 실행시간 : {time.time() - start10}")
-print(f"나눗셈을 한 횟수 : {op_cnt}")
-print(f"2~ 2000 이하에서의 소수의 갯수 : {len(primes)}")
+
+def count_prime1(number):
+    # op_time = time.time()  # operation_time : 실행 시간
+    op_cnt = 0  # operation_count : 실행 횟수
+    primes = []  # primes : 소수들
+
+    # 2부터 number 의 수까지 n에 들어감
+    for n in range(2, number + 1):
+        # n이 10이라면, i는 2부터 9까지의 수로 한번씩 나눔
+        for i in range(2, n):
+            # 계산할 때마다 counter 증가
+            op_cnt += 1
+            # 만약 n을 i로 나눴을 때 나머지로 0이 나온다는 것은 나눠진다는 것이니 소수가 아님
+            if n % i == 0:
+                break
+        else:
+            primes.append(n)
+    # print(f"총 실행시간 : {time.time() - op_time}")
+    print(f"나눗셈을 한 횟수 : {op_cnt}")
+    print(f"2~ {number} 이하에서의 소수의 갯수 : {len(primes)}")
+    return primes
 
 # '''
 
 # '''11, 소수를 넣은 배열을 이용해 좀 더 빠르게 소수를 구하기, 이전보다 약 5배 빠름
 # 소수는 2빼고 모두 홀수라는 것을 이용해 계산을 좀 더 빠르게
-start11 = time.time()
-cnt = 0
-prime_cnt = 0
-primes = [None] * 1000
+def count_prime2(number):
+    cnt = 0
+    prime_cnt = 0
+    primes = [None] * 1000
 
-# primes 리스트에 첫 소수인 2를 넣고, 2를 넣었으니 prime_cnt를 1 증가
-primes[0] = 2
-prime_cnt += 1
+    # primes 리스트에 첫 소수인 2를 넣고, 2를 넣었으니 prime_cnt를 1 증가
+    primes[0] = 2
+    prime_cnt += 1
 
-# 3부터 1001까지 2칸씩이니, 3부터 시작하는 홀수만 계산하겠다
-# 왜냐면, 짝수는 무조건 나눠떨어지니까! 소수는 2빼고 홀수다
-for n in range(3, 2001, 2):
-    # 1부터 prime_cnt 개수까지만 실행하겠다.
-    for i in range(1, prime_cnt):
-        # 나눈 횟수 1증가
-        cnt += 1
-        # 만약 primes 리스트에 있는 값들로 나눠서 0이 나온다 --> 소수가 아니니 그냥 넘어간다
-        if n % primes[i] == 0:
-            break
-    # 만약 0으로 나눠지지 않는다면, 그 수를 primes 리스트의 현재 인덱스에 넣어라.
-    else:
-        primes[prime_cnt] = n
-        # 소수 개수를 추가했으니 prime_cnt 개수 1 증가
-        prime_cnt += 1
-print(f"11 : 총 실행 시간 : {time.time() - start11}")
-print(f"나눗셈을 실행한 횟수 : {cnt}")
-print(f"찾은 소수의 개수 : {prime_cnt}")
+    # 3부터 1001까지 2칸씩이니, 3부터 시작하는 홀수만 계산하겠다
+    # 왜냐면, 짝수는 무조건 나눠떨어지니까! 소수는 2빼고 홀수다
+    for n in range(3, number + 1, 2):
+        # 1부터 prime_cnt 개수까지만 실행하겠다.
+        for i in range(1, prime_cnt):
+            # 나눈 횟수 1증가
+            cnt += 1
+            # 만약 primes 리스트에 있는 값들로 나눠서 0이 나온다 --> 소수가 아니니 그냥 넘어간다
+            if n % primes[i] == 0:
+                break
+        # 만약 0으로 나눠지지 않는다면, 그 수를 primes 리스트의 현재 인덱스에 넣어라.
+        else:
+            primes[prime_cnt] = n
+            # 소수 개수를 추가했으니 prime_cnt 개수 1 증가
+            prime_cnt += 1
+    print(f"나눗셈을 실행한 횟수 : {cnt}")
+    print(f"찾은 소수의 개수 : {prime_cnt}")
+
 # 11'''
 
 '''12책에 써 있던 소수 구하는 제일 빠른 알고리즘, 위보다 계산 속도는 약 2배 빠름
@@ -400,48 +404,48 @@ print(f"12:찾은 소수의 개수 : {found_pn}")
 # 책에 써져있는 것보다 약 최소 2배~ 최대9배가 빠르다
 # 제곱근 + 소수는 2빼고 모두 홀수를 이용
 # 개량버전
-start13 = time.time()
-cnt = 0
-primes = [2, 3]
-# (정보) 루트 n보다 작은 소수들로 n을 나눴을 때, 모두 나눠 떨어지지 않으면 n은 소수다
-for q in range(5, 2001, 2):
-    i = 1 # 3부터 시작
-    # 소수가 담긴 배열에서 소수를 꺼내서, 소수의 제곱이 판단할 q보다 작을경우 while문 실행하다, 조건이 안 맞을시 else 실행
-    while primes[i] * primes[i] <= q:
-        cnt += 2
-        if q % primes[i] == 0:
-            break
-        i += 1
-    # while 문의 조건이 부정되는 순간 else문 실행
-    else:
-        primes.append(q)
-print(f"13:총 실행 시간ex : {time.time() - start13}")
-print(f"13:찾은 소수ex : {primes}")
-print(f"13:곱셈과 나눗셈을 실행한 횟수ex : {cnt}")
-print(f"13:찾은 소수의 개수ex : {len(primes)}")
-print(f"i : {i}")
 
 
-start13_1 = time.time()
-cnt = 0
-primes = [2, 3]
-# (정보) 루트 n보다 작은 소수들로 n을 나눴을 때, 모두 나눠 떨어지지 않으면 n은 소수다
-for q in range(5, 2001, 2):
-    i = 1 # 3부터 시작
-    # 소수가 담긴 배열에서 소수를 꺼내서, 소수의 제곱이 판단할 q보다 작을경우 while문 실행하다, 조건이 안 맞을시 else 실행
-    while primes[i] ** 2 <= q:
-        cnt += 2
-        if q % primes[i] == 0:
-            break
-        i += 1
-    # while 문의 조건이 부정되는 순간 else문 실행
-    else:
-        primes.append(q)
-print(f"13:총 실행 시간ex_1 : {time.time() - start13_1}")
-print(f"13:찾은 소수ex : {primes}")
-print(f"13:곱셈과 나눗셈을 실행한 횟수ex_1 : {cnt}")
-print(f"13:찾은 소수의 개수ex : {len(primes)}")
-print(f"i : {i}")
+def count_prime3(number):
+    cnt = 0
+    primes = [2, 3]
+    # (정보) 루트 n보다 작은 소수들로 n을 나눴을 때, 모두 나눠 떨어지지 않으면 n은 소수다
+    for q in range(5, 2001, 2):
+        i = 1  # 3부터 시작
+        # 소수가 담긴 배열에서 소수를 꺼내서, 소수의 제곱이 판단할 q보다 작을경우 while문 실행하다, 조건이 안 맞을시 else 실행
+        while primes[i] * primes[i] <= q:
+            cnt += 2
+            if q % primes[i] == 0:
+                break
+            i += 1
+        # while 문의 조건이 부정되는 순간 else문 실행
+        else:
+            primes.append(q)
+    # print(f"13:찾은 소수ex : {primes}")
+    print(f"13:곱셈과 나눗셈을 실행한 횟수ex : {cnt}")
+    print(f"13:찾은 소수의 개수ex : {len(primes)}")
+    # print(f"i : {i}")
+
+
+def count_prime3_1(number):
+    cnt = 0
+    primes = [2, 3]
+    # (정보) 루트 n보다 작은 소수들로 n을 나눴을 때, 모두 나눠 떨어지지 않으면 n은 소수다
+    for q in range(5, 2001, 2):
+        i = 1  # 3부터 시작
+        # 소수가 담긴 배열에서 소수를 꺼내서, 소수의 제곱이 판단할 q보다 작을경우 while문 실행하다, 조건이 안 맞을시 else 실행
+        while primes[i] ** 2 <= q:
+            cnt += 2
+            if q % primes[i] == 0:
+                break
+            i += 1
+        # while 문의 조건이 부정되는 순간 else문 실행
+        else:
+            primes.append(q)
+    # print(f"13:찾은 소수ex : {primes}")
+    print(f"13:곱셈과 나눗셈을 실행한 횟수ex_1 : {cnt}")
+    print(f"13:찾은 소수의 개수ex : {len(primes)}")
+    # print(f"i : {i}")
 
 
 # 13'''
@@ -475,36 +479,5 @@ print(f"14:찾은 소수의 개수 : {found_pn}")
 print(f"i : {i}")
 
 # 14'''
-###############
-# '''15
-from typing import Any, Sequence
 
-# 단순 선형 검색 알고리즘 1
-def seq_search(container: Sequence, key: Any) -> int:
-    """
-    (콘테이너, 찾고자 하는 값) --> 콘테이너 몇 번째 인덱스에 있는지 반환하는 함수
-    """
-    for idx, i in enumerate(container):
-        print(f"idx : {idx}, i: {i}, i type : {type(i)}")
-        if i == key:
-            return idx
-    else:
-        return -1
-# 15'''
-#################
-'''16
-if __name__ == "__main__":
-    num = int(input("원소 수를 입력하시오 : "))
-    x = [None] * num
 
-    for i in range(num):
-        x[i] = int(input(f"x[{i}]에 넣을 수를 입력하시오: "))
-    key = int(input("검색할 값을 입력하세요 : "))
-    idx = seq_search(x, key)
-
-    if idx == -1:
-        print("검색값을 같는 원소가 존재하지 않습니다. ")
-    else:
-        print(f"검색값은 x[{idx}]에 있습니다. ")
-
-# 16'''

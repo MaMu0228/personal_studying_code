@@ -1,7 +1,8 @@
 import time
 import test
 import random
-from test import seq_search
+import copy
+from typing import Any, Sequence
 
 """------------------
 print("1부터 입력받은 n까지의 수를 모두 더해서 출력하는 함수입니다.")
@@ -156,13 +157,33 @@ else:
 
 # 1'''
 
-# '''2
-from test import seq_search
+
+###############
+# '''15
+
+# 단순 선형 검색 알고리즘 1
+def seq_search(container: Sequence, key: Any) -> int:
+    tmplist = copy.deepcopy(container)
+
+    """
+    (콘테이너, 찾고자 하는 값) --> 콘테이너 몇 번째 인덱스에 있는지 반환하는 함수
+    """
+    for idx, i in enumerate(tmplist):
+        if i == key:
+            return idx
+    else:
+        return -1
+# 15'''
+#################
+
+
+'''2
+
 
 tuple1 = (4, 7, 5.6, 2, 3.14, 1)
 str1 = "string"
 list1 = []
-for i in range(3000):
+for i in range(3001):
     list1.append(i)
 
 print(f"{tuple1}에서 5.6의 인덱스는 {seq_search(tuple1, 5.6)}입니다.")
@@ -173,39 +194,81 @@ print(f"{list1}에서 'DTS'의 인데그는 {seq_search(list1, 'DTS')}입니다.
 
 # '''3
 
-from typing import Any, Sequence
-import copy
-
 # 2는 1보다 약 13배 빠름
 def seq_search2(seq: Sequence, key: Any) -> int:
     tmplist = copy.deepcopy(seq)
     tmplist.append(key)
 
-    i= 0
+    i = 0
     while True:
         if tmplist[i] == key:
             break
         i += 1
     return -1 if i == len(seq) else i
 
-# 3은 1보다 약 5배 빠름
+# 2_1은 1보다 약 10%에서
+def seq_search2_1(seq: Sequence, key: Any) -> int:
+    tmplist = copy.deepcopy(seq)
+    tmplist.append(key)
+
+    i = 0
+    while tmplist[i] != key:
+        i += 1
+    return -1 if i == len(seq) else i
+
+# 3은 2보다 약 2배 느림
 def seq_search3(seq: Sequence, key: Any) -> int:
+    tmplist = copy.deepcopy(seq)
+    # tmplist.append(key)
+
+    for idx, val in enumerate(seq):
+        if val == key:
+            return idx
+    return -1
+
+# 3은 2보다 약 2배 느림
+def seq_search3_1(seq: Sequence, key: Any) -> int:
     tmplist = copy.deepcopy(seq)
     tmplist.append(key)
 
     for idx, val in enumerate(seq):
         if val == key:
             return idx
-    else:
-        return -1
-
+    return -1
 
 
 if __name__ == "__main__":
     time1 = time.time()
-    print(f"list1에서 'DTS'의 인데그는 {seq_search(list1, 1000)}입니다. \n 실행 시간 : {time.time() - time1}")
+    print(f"list1에서 1함수를 이용한 {seq_search(list1, 2990)}입니다. \n 실행 시간 : {time.time() - time1}")
     time2 = time.time()
-    print(f"list1에서 'DTS'의 인데그는 {seq_search2(list1, 1000)}입니다. \n 실행 시간 : {time.time() - time2}")
+    print(f"list1에서 2함수를 이용한  {seq_search2(list1, 2990)}입니다. \n 실행 시간 : {time.time() - time2}")
+    time2_1 = time.time()
+    print(f"list1에서 2_1함수를 이용한  {seq_search2_1(list1, 2990)}입니다. \n 실행 시간 : {time.time() - time2_1}")
     time3 = time.time()
-    print(f"list1에서 'DTS'의 인데그는 {seq_search3(list1, 1000)}입니다. \n 실행 시간 : {time.time() - time3}")
+    print(f"list1에서  3함수를 이용한  {seq_search3(list1, 2990)}입니다. \n 실행 시간 : {time.time() - time3}")
 # 3'''
+
+
+# """ 이진검색 1
+def bin_search1(c: Sequence, key: Any) -> Any:
+    first = 0
+    last = len(c) - 1  # 인덱스는 전체 길이의 -1까지이니
+    while True:
+        mid = (first + last) // 2
+        # 만약 리스트 가운데값이 key와 같으면, 현재 mid의 숫자 반환
+        if c[mid] == key:
+            return mid
+        # 만약 리스트 중앙값이 키보다 작으면, first에 mid보다 1큰 숫자를 저장
+        elif c[mid] < key:
+            first = mid + 1
+        # 만약 리스트 중앙값이 키보다 크면, last에 mid보다 1 작은 값을 저장
+        else:
+            last = mid - 1
+        # 만약 첫 인덱스가 마지막보다 커진다면, 말이 안되므로 강제 종료
+        if first > last:
+            break
+        return -1
+
+
+# 이진 검색 1 """
+
