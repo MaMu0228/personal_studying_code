@@ -305,38 +305,70 @@ print(f"x = {x}")
 print(f"y = {y}")
 # '''
 
-# '''10, for문을 이용해 단순히 소수 구하는 함수
-# n을 n 이하의 수들로 모두 나눳을 때 한번이라도 0으로 나눠 떨어지면 소수가 아님
 
-def count_prime1(number):
-    # op_time = time.time()  # operation_time : 실행 시간
+# '''10, for 문과 "소수는 약수가 2개"라는 조건을 이용해 구하는 함수
+def count_prime1(number: int) -> list:
     op_cnt = 0  # operation_count : 실행 횟수
     primes = []  # primes : 소수들
 
-    # 2부터 number 의 수까지 n에 들어감
+    # 1은 소수가 아니니 2부터 계산하며, 정확히 number 숫자까지 계산하기 위해 number + 1을 함
+    # ex) range(2, 100) --> 2부터 99까지 총 100번, range(2, 101) --> 2부터 100까지 총 101번
     for n in range(2, number + 1):
-        # n이 10이라면, i는 2부터 9까지의 수로 한번씩 나눔
+        # 어짜피 자연수는 모두 1과 자기자신으로 나누어 떨어지니, 2부터 시작해 n보다 작은 수로 모두 나눴을 때
+        # 한번도 나누어 떨이지지 않으면 소수
+        # ex) range(2, n) --> 2부터 시작해 n-1까지 계산
         for i in range(2, n):
-            # 계산할 때마다 counter 증가
+            # 계산할 때마다 계산횟수인 op_cnt를 증가
             op_cnt += 1
-            # 만약 n을 i로 나눴을 때 나머지로 0이 나온다는 것은 나눠진다는 것이니 소수가 아님
+            # 만약 n을 i로 나눴을 때 나머지로 0이 나온다는 것은, 1과 자기자신 외 약수가 하나 더 있다는 것이니
+            # 소수가 아니므로 for문 탈출
             if n % i == 0:
                 break
+        # 만약 2부터 n-1까지 for문을 모두 실행했을 때 break가 발생하지 않을 시 else 문을 실행
         else:
+            # 소수 추가
             primes.append(n)
-    # print(f"총 실행시간 : {time.time() - op_time}")
     print(f"나눗셈을 한 횟수 : {op_cnt}")
     print(f"2~ {number} 이하에서의 소수의 갯수 : {len(primes)}")
+    
+    # 소수가 들어있는 리스트 반환
     return primes
 
+
 # '''
+# 소수는 2빼고 모두 홀수라는 것과 홀수의 약수는 홀수뿐이라는 것을 이용한 소수 알고리즘
+def count_prime2(number: int) -> list:
+    op_cnt = 0  # operation_count : 실행 횟수
+    # 소수는 2를 제외하곤 모두 홀수니, 귀찮은 2는 소수 리스트에 넣고 시작
+    primes = [2]  # primes : 소수들
+
+    # 최소 소수 홀수인 3부터 2씩 증가해 홀수들만, number + 1까지 반복하겠다
+    # ex) range(3, 10, 2) --> 3 5 7 9
+    for n in range(3, number + 1, 2):
+        # 홀수인 n에는 짝수가 들어있지 않으니, 홀수 i로만 나눈다.
+        # 소수의 조건은 약수가 2개며, 자연수는 기본적으로 약수를 2개를 가지고 있기에 
+        # 한번이라도 n이 홀수로 나누어 떨어지면 소수가 아님 
+        # ex) range(3, 5, 2) --> 3 , range(3, 7, 2) --> 3, 5, range(3, 9, 2) --> 3, 5, 7
+        for i in range(3, n, 2):
+            # 계산 카운트로 op_cnt 1증가
+            op_cnt += 1
+            # 만약 n을 i로 나눠서 0이 나온다 --> 약수가 3개 이상이라는 것이니 n + 1로 넘어간다
+            if n % i == 0:
+                break
+        # 위 for 문이 끝날 때까지 break가 발생하지 않을시, 현재 n의 약수가 2개뿐이라는 거니 else 문 실행
+        else:
+            primes.append(n)
+    print(f"나눗셈을 실행한 횟수 : {op_cnt}")
+    print(f"찾은 소수의 개수 : {len(primes)}")
+    return primes
+
 
 # '''11, 소수를 넣은 배열을 이용해 좀 더 빠르게 소수를 구하기, 이전보다 약 5배 빠름
 # 소수는 2빼고 모두 홀수라는 것을 이용해 계산을 좀 더 빠르게
-def count_prime2(number):
+def count_prime2_1(number: int) -> list:
     cnt = 0
     prime_cnt = 0
-    primes = [None] * 1000
+    primes = [None] * number
 
     # primes 리스트에 첫 소수인 2를 넣고, 2를 넣었으니 prime_cnt를 1 증가
     primes[0] = 2
@@ -345,11 +377,11 @@ def count_prime2(number):
     # 3부터 1001까지 2칸씩이니, 3부터 시작하는 홀수만 계산하겠다
     # 왜냐면, 짝수는 무조건 나눠떨어지니까! 소수는 2빼고 홀수다
     for n in range(3, number + 1, 2):
-        # 1부터 prime_cnt 개수까지만 실행하겠다.
+        # 1부터 소수 개수까지만 실행하겠다.
         for i in range(1, prime_cnt):
             # 나눈 횟수 1증가
             cnt += 1
-            # 만약 primes 리스트에 있는 값들로 나눠서 0이 나온다 --> 소수가 아니니 그냥 넘어간다
+            # 만약 n보다 작은 소수들로 나눠서 0이 나온다 --> 소수가 아니니 그냥 넘어간다
             if n % primes[i] == 0:
                 break
         # 만약 0으로 나눠지지 않는다면, 그 수를 primes 리스트의 현재 인덱스에 넣어라.
@@ -361,6 +393,66 @@ def count_prime2(number):
     print(f"찾은 소수의 개수 : {prime_cnt}")
 
 # 11'''
+# !!여기까지 하다 카페에서 집으로 옴
+# 소수는 2빼고 모두 홀수라는 것과 홀수의 약수는 홀수뿐 +
+# 2이상의 자연수는 소수의 곱을 이용한 소수 알고리즘
+def count_prime3(number: int) -> list:
+    op_cnt = 0  # operation_count : 실행 횟수
+    # 소수는 2를 제외하곤 모두 홀수니, 귀찮은 2는 소수 리스트에 넣고 시작
+    primes = [2]  # primes : 소수들
+
+    # 최소 소수 홀수인 3부터 2씩 증가해 홀수들만, number + 1까지 반복하겠다
+    # ex) range(3, 10, 2) --> 3 5 7 9
+    for n in range(3, number + 1, 2):
+        # 지금까지 저장된 소수의 개수, len(primes)만큼 반복한다
+        for i in range(len(primes)):
+            # 계산 카운트로 op_cnt 1증가
+            op_cnt += 1
+            # 만약 n을 소수 2부터 현재 저장된 소수까지 나누다가, 한번이라도 나누어 떨어지면 약수가 3개
+            # 이상이라는 것이니 break 하고 다음 n+1를 실행
+            if n % primes[i] == 0:
+                break
+        # 위 for 문이 끝날 때까지 break가 발생하지 않을시, 현재 n의 약수가 2개뿐이라는 거니 else 문 실행
+        # 하여 소수리스트에 n을 추가
+        else:
+            primes.append(n)
+    print(f"나눗셈을 실행한 횟수 : {op_cnt}")
+    print(f"찾은 소수의 개수 : {len(primes)}")
+    return primes
+
+
+def count_prime_book(number):
+    cnt = 0  # 계산 횟수
+    found_pn = 0  # 찾은 소수의 개수
+    primes = [None] * number  # 소수를 저장할 배열, 2를 제외한 짝수는 소수가 아니기에 절반값인 500으로도 충분하다
+
+    # 소수 배열인 primes의 인덱스 0에는 2를 넣고, 넣었으니 카운트 1 증가
+    primes[found_pn] = 2
+    found_pn += 1
+    # 소수 배열의 primes의 인덱스 1에 3을 넣고, 카운트 1 증가, 왜냐면 2와 3은 소수니까
+    primes[found_pn] = 3
+    found_pn += 1
+
+    # 2와 3은 이미 위에서 계산했으니 5부터 1000까지 계산하되, 똑같이 소수는 2빼곤 모두 홀수니 2칸씩 뛰면서 계산한다.
+    for n in range(5, number + 1, 2):
+        i = 1
+        # 배열 1(3)의 제곱을 한 값이 현재의 n보다 작거나 같으면
+        while primes[i] * primes[i] <= n:
+            # "primes[i] * primes[i]" 라는 계산과 "n % primes[i]"계산을 하니, 총 계산 횟수는 2 증가
+            cnt += 2
+            # 만약 현재 n을 현재 배열값으로 나눴을 때 0이 나온다면 종료
+            if n % primes[i] == 0:
+                break
+            # 그리고 현재 숫자가 소수인지 아닌지 이미 확인했으니, 다시 1 증가
+            i += 1
+        else:
+            # 만약 현재 배열에 들어있는 값의 제곱이 n보다 작다면, 소수이므로 소수 번호를 인덱스 삼아 배열 primes 에 저장
+            primes[found_pn] = n
+            # 소수를 추가했으니, 소수 카운트 1 증가
+            found_pn += 1
+            # 만약 "primes[i] * primes[i] <= n"조건이 만족하지 않을 경우, 자체 계산 횟수밖에 없으니 1증가
+            cnt += 1
+
 
 '''12책에 써 있던 소수 구하는 제일 빠른 알고리즘, 위보다 계산 속도는 약 2배 빠름
 start12 = time.time()
@@ -405,12 +497,11 @@ print(f"12:찾은 소수의 개수 : {found_pn}")
 # 제곱근 + 소수는 2빼고 모두 홀수를 이용
 # 개량버전
 
-
-def count_prime3(number):
+def count_prime4(number):
     cnt = 0
     primes = [2, 3]
     # (정보) 루트 n보다 작은 소수들로 n을 나눴을 때, 모두 나눠 떨어지지 않으면 n은 소수다
-    for q in range(5, 2001, 2):
+    for q in range(5, number + 1, 2):
         i = 1  # 3부터 시작
         # 소수가 담긴 배열에서 소수를 꺼내서, 소수의 제곱이 판단할 q보다 작을경우 while문 실행하다, 조건이 안 맞을시 else 실행
         while primes[i] * primes[i] <= q:
@@ -427,11 +518,11 @@ def count_prime3(number):
     # print(f"i : {i}")
 
 
-def count_prime3_1(number):
+def count_prime4_1(number):
     cnt = 0
     primes = [2, 3]
     # (정보) 루트 n보다 작은 소수들로 n을 나눴을 때, 모두 나눠 떨어지지 않으면 n은 소수다
-    for q in range(5, 2001, 2):
+    for q in range(5, number + 1, 2):
         i = 1  # 3부터 시작
         # 소수가 담긴 배열에서 소수를 꺼내서, 소수의 제곱이 판단할 q보다 작을경우 while문 실행하다, 조건이 안 맞을시 else 실행
         while primes[i] ** 2 <= q:
